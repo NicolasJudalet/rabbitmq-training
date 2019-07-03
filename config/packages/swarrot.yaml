@@ -1,0 +1,66 @@
+swarrot:
+    provider: amqp_lib
+    connections:
+        rabbit_vhost:
+            host: localhost
+            port: 5672
+            login: guest
+            password: guest
+    consumers:
+        create_order:
+            processor: App\Processor\CreateOrderProcessor
+            queue: ms.order.manomano.com;create_order
+            middleware_stack: # order matters
+                -
+                     configurator: swarrot.processor.max_messages
+                     extras:
+                        max_messages: 1000
+                -
+                    configurator: swarrot.processor.max_execution_time
+                    extras:
+                        max_execution_time: 300
+                - configurator: swarrot.processor.exception_catcher
+                -
+                    configurator: swarrot.processor.ack
+                    extras:
+                        requeue_on_error: false
+        send_email:
+            processor: App\Processor\SendEmailProcessor
+            queue: ms.messenger.manomano.com;send_email
+            middleware_stack: # order matters
+                -
+                     configurator: swarrot.processor.max_messages
+                     extras:
+                        max_messages: 1000
+                -
+                    configurator: swarrot.processor.max_execution_time
+                    extras:
+                        max_execution_time: 300
+                - configurator: swarrot.processor.exception_catcher
+                -
+                    configurator: swarrot.processor.ack
+                    extras:
+                        requeue_on_error: false
+        save_card:
+            processor: App\Processor\SaveCardProcessor
+            queue: ms.customer.manomano.com;save_card
+            middleware_stack: # order matters
+                -
+                     configurator: swarrot.processor.max_messages
+                     extras:
+                        max_messages: 1000
+                -
+                    configurator: swarrot.processor.max_execution_time
+                    extras:
+                        max_execution_time: 300
+                - configurator: swarrot.processor.exception_catcher
+                -
+                    configurator: swarrot.processor.ack
+                    extras:
+                        requeue_on_error: false
+
+    messages_types:
+        charge_card_succeeded:
+            connection: rabbit_vhost
+            exchange: ms.payment.manomano.com
+            routing-key: charge.card.succeeded

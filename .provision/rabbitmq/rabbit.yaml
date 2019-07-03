@@ -1,0 +1,32 @@
+rabbit_setup:
+    connections:
+        local:
+            user: guest
+            password: guest
+            host: "127.0.0.1"
+            port: 15672
+
+    vhosts:
+        "/": #vhost name
+            connection: local
+            exchanges:
+                ms.payment.manomano.com:
+                    type: topic
+                    durable: true
+            queues:
+                ### Queues
+                "ms.order.manomano.com;create_order":
+                    durable: true
+                    auto-delete: false
+                    bindings:
+                        - { exchange: 'ms.payment.manomano.com', routing_key: 'charge.card.succeeded' }
+                "ms.messenger.manomano.com;send_email":
+                    durable: true
+                    auto-delete: false
+                    bindings:
+                        - { exchange: 'ms.payment.manomano.com', routing_key: 'charge.card.succeeded' }
+                "ms.customer.manomano.com;save_card":
+                    durable: true
+                    auto-delete: false
+                    bindings:
+                        - { exchange: 'ms.payment.manomano.com', routing_key: 'charge.card.succeeded' }
