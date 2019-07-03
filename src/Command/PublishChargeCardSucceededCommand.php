@@ -25,22 +25,25 @@ class PublishChargeCardSucceededCommand extends Command
     {
         $this
             ->setName('publish')
-            ->setDescription('Publishes a new event charge.card.succeeded')
-            ->addOption('numberOfMessages', 'm', InputOption::VALUE_REQUIRED, "Number of messages to publish", 1000);
+            ->setDescription('Publishes a new event charge.card.succeeded');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
 
-        $numberOfMessages = $input->getOption('numberOfMessages');
-        $io->success(sprintf('Publishing %s charge.card.succeeded messages', $numberOfMessages));
+        $io->success(sprintf('Start publishing charge.card.succeeded messages'));
 
-        for ($x = 0; $x < $numberOfMessages; $x++) {
-            $transactionId = rand(1, 1000);
+        for ($batch = 0; $batch < 1000; $batch++){
+            for ($x = 0; $x < 2; $x++) {
+                $transactionId = rand(1, 1000);
 
-            $message = new Message(json_encode(['transaction_id' => $transactionId]));
-            $this->publisher->publish('charge_card_succeeded', $message);
+                $message = new Message(json_encode(['transaction_id' => $transactionId]));
+                $this->publisher->publish('charge_card_succeeded', $message);
+
+            }
+
+            sleep(1);
         }
     }
 }

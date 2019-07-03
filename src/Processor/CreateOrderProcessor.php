@@ -11,6 +11,8 @@ class CreateOrderProcessor implements ProcessorInterface
     {
         $messageBody = json_decode($message->getBody(), true);
 
+        sleep(1);
+
         var_dump(sprintf('Created new order for transaction with id %s',
             $messageBody['transaction_id']
         ));
