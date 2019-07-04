@@ -58,6 +58,23 @@ swarrot:
                     configurator: swarrot.processor.ack
                     extras:
                         requeue_on_error: false
+        save_card_error:
+            processor: App\Processor\SaveCardProcessorError
+            queue: ms.customer.manomano.com;save_card
+            middleware_stack: # order matters
+                -
+                     configurator: swarrot.processor.max_messages
+                     extras:
+                        max_messages: 1000
+                -
+                    configurator: swarrot.processor.max_execution_time
+                    extras:
+                        max_execution_time: 300
+                - configurator: swarrot.processor.exception_catcher
+                -
+                    configurator: swarrot.processor.ack
+                    extras:
+                        requeue_on_error: false
 
     messages_types:
         charge_card_succeeded:
