@@ -13,7 +13,7 @@ class SaveCardProcessorError implements ProcessorInterface
 
         throw new \Error(sprintf(
             'The card corresponding to transaction with id %s could not be saved',
-            $messageBody
+            $messageBody['transaction_id']
         ));
     }
 }

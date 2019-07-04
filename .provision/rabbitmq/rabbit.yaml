@@ -13,6 +13,9 @@ rabbit_setup:
                 ms.payment.manomano.com:
                     type: topic
                     durable: true
+                ms.customer.manomano.com:
+                    type: topic
+                    durable: true
             queues:
                 ### Queues
                 "ms.order.manomano.com;create_order":
@@ -30,3 +33,14 @@ rabbit_setup:
                     auto-delete: false
                     bindings:
                         - { exchange: 'ms.payment.manomano.com', routing_key: 'charge.card.succeeded' }
+
+                ### Uncomment these lines to configure retry queue ###
+#                "ms.customer.manomano.com;save_card_retry":
+#                    durable: true
+#                    auto-delete: false
+#                    arguments:
+#                      x-message-ttl: 10000 # 10s
+#                      x-dead-letter-exchange: 'ms.payment.manomano.com'
+#                      x-dead-letter-routing-key: 'charge.card.succeeded'
+#                    bindings:
+#                        - { exchange: 'ms.customer.manomano.com', routing_key: 'save_card_retry' }

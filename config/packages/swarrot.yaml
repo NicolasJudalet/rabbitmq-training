@@ -75,7 +75,11 @@ swarrot:
                     configurator: swarrot.processor.ack
                     extras:
                         requeue_on_error: false
-
+                ### Uncomment these lines to configure retry queue ###
+#                - configurator: swarrot.processor.retry
+#                  extras:
+#                      retry_exchange: ms.customer.manomano.com
+#                      retry_routing_key_pattern: 'save_card_retry'
     messages_types:
         charge_card_succeeded:
             connection: rabbit_vhost
